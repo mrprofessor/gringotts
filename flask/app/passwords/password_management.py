@@ -1,5 +1,9 @@
 import json
 
+# TODO:
+# Apparently not closing the file, makes the file corrupt.
+# But again, JSON files aren't databases.
+
 class PasswordManagement:
     """ Indie file management class """
     def __init__(self, filename):
@@ -8,13 +12,20 @@ class PasswordManagement:
 
     def list(self):
         """ Return all records """
-        return self.passwords
+        pw_dict = self.passwords
+
+        pw_list = [{**pw_dict[key], "uuid": key} for key in pw_dict]
+        return pw_list
 
     def get(self, password_id):
         """ Return a particular record """
-        return self.passwords.get(password_id)
+        pw_record = self.passwords.get(password_id)
+        if pw_record:
+            pw_record = {**pw_record, "uuid": password_id}
 
-    def post(self, pw_key, pw_data):
+        return pw_record
+
+    def create(self, pw_key, pw_data):
         """ Append/Update a new record """
 
         self.passwords[pw_key] = pw_data
@@ -56,3 +67,6 @@ class PasswordManagement:
             return err
 
         return data
+
+    def encrypt_file(self):
+        pass

@@ -4,6 +4,7 @@ from .api_exeptions import (
     ValidationException,
     NotFoundException,
     AuthenticationException,
+    SystemException
 )
 
 from .handler import handle_validation_error

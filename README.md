@@ -20,18 +20,18 @@ A password manager named after the famous wizarding bank.
 1. List all the passwords
 
 ```
-    GET /passwords/
+    GET /api/passwords/
 ```
 
 2. Get one particular password
 ```
-    GET /passwords/:id/
+    GET /api/passwords/:id/
 ```
 
 3. Create one password
 
 ```
-    POST /passwords/:id/
+    POST /api/passwords/:id/
     
     Payload:
         {
@@ -43,7 +43,7 @@ A password manager named after the famous wizarding bank.
 4. Update one password
 
 ```
-    PUT /passwords/:id/
+    PUT /api/passwords/:id/
     
     Payload:
         {
@@ -55,7 +55,7 @@ A password manager named after the famous wizarding bank.
 5. Delete a password
 
 ```
-    DELETE /passwords/:id/
+    DELETE /api/passwords/:id/
 ```
 
 ### Password storage file
@@ -67,7 +67,7 @@ for this will only resemble building another key-value db like redis.
 So I have choosen to use an JSON file for this purpose. There are good libraries
 to manipulate the JSON data.
 
-To encrypt the data/file at rest, [pyAesCrypt](https://pypi.org/project/pyAesCrypt/)
+To encrypt the data/file at rest, [Cryptography](https://pypi.org/project/cryptography/)
 is used.
 
 Structure of an single entry:
@@ -95,3 +95,12 @@ Only cons to this method is that if the user looses the key, it would be
 impossible to re-generate it again.
 
 
+## Development
+
+Steps to run the backend app
+
+```
+cd flask
+docker build -t gringotts .
+docker run  -e CONFIG_ENV="development"  -e CRYPTO_KEY="aWV0tnyeoDbWPjmAKjwV_Q6dAPTy_wjdVJGf-iwJjfY="  -p 5000:5000 gringotts
+```

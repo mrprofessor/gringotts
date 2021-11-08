@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app as app
 from app.common.views import BaseView
 from app.common.exceptions import NotFoundException
 from ..password_management import PasswordManagement
@@ -6,8 +6,10 @@ from app.common.representations import output_json
 from ..schemas.password_schema import PasswordSchema
 import uuid
 
+key = app.config.get('CRYPTO_KEY')
+filename = app.config.get('PASSWORD_FILE')
+pm = PasswordManagement(filename, key)
 
-pm = PasswordManagement("passwords.json")
 
 class PasswordsView(BaseView):
     representations = {'application/json': output_json}
@@ -43,20 +45,4 @@ class PasswordsView(BaseView):
             return pm.get(pw_id), 201
         else:
             raise NotFoundException()
-
-
-
-
-
-# @app.route("/api/passwords", methods=["POST"])
-# def pw_post():
-#     # Validate json
-#     return "All passwords in json format"
-
-
-# @app.route("/api/passwords/<pw_id>", methods=["PUT"])
-# def pw_update():
-#     # Validate json
-#     return "All passwords in json format"
-
 

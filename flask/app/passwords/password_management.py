@@ -1,12 +1,16 @@
 import json
+from app.common.exceptions import SystemException
+from cryptography.fernet import Fernet
 
-# TODO:
-# Apparently not closing the file, makes the file corrupt.
-# But again, JSON files aren't databases.
 
 class PasswordManagement:
     """ Indie file management class """
-    def __init__(self, filename):
+    def __init__(self, filename, key):
+        """
+            filename: relative location of the file
+            key: relative location of the key file
+        """
+        self.key = key
         self.filename = filename
         self.passwords = self.read_file()
 
@@ -22,51 +26,94 @@ class PasswordManagement:
         pw_record = self.passwords.get(password_id)
         if pw_record:
             pw_record = {**pw_record, "uuid": password_id}
-
         return pw_record
 
     def create(self, pw_key, pw_data):
         """ Append/Update a new record """
-
         self.passwords[pw_key] = pw_data
         self.rewrite()
 
     def delete(self, password_id):
         """ delete a particular record """
-
         if self.passwords.get(password_id):
             del self.passwords[password_id]
 
         self.rewrite()
 
     def rewrite(self):
-        """ Rewrite the json file """
-
-        buff = open(self.filename, "w")
-        with open(self.filename, 'w', encoding='utf-8') as buff:
-            json.dump(self.passwords, buff, ensure_ascii=False, indent=4)
-        buff.close()
-
-    # TODO
-    # 1. Unencrypt file?
-    def read_file(self):
-        """ Read the password file """
-
-        # Handle file exception
+        """ Rewrite the password file """
+        json_data = json.dumps(self.passwords)
+        encrypted_data = self.encrypt_text(str(json_data))
         try:
-            buff = open(self.filename, 'rb')
+            buff = open(self.filename, 'w')
+            buff.write(encrypted_data)
+            buff.close()
         except (OSError, IOError) as err:
             print("Could not open/read file:", self.filename)
             return err
 
-        # Handler json exception
+    def read_file(self):
+        """ Read the password file """
         try:
-            data = json.load(buff)
+            buff = open(self.filename, 'r')
+            raw_data = buff.read()
+            decrypted_data = self.decrypt_text(raw_data)
+            data = json.loads(decrypted_data)
+            buff.close()
+        except (OSError, IOError) as err:
+            print("Could not open/read file:", self.filename)
+            return err
+        except Exception:
+            raise SystemException
+
+        return data
+
+    def encrypt_text(self, input_text):
+        """ Encrypt text """
+        fercryptor = Fernet(self.key)
+        return fercryptor.encrypt(input_text.encode()).decode()
+
+    def decrypt_text(self, input_text):
+        """ Decrypt text """
+        fercryptor = Fernet(self.key)
+        return fercryptor.decrypt(input_text.encode()).decode()
+
+    def encrypt_file(self):
+        """ Encrypt the contents of the file """
+        fercryptor = Fernet(self.key)
+
+        # Handle file exception
+        try:
+            buff = open(self.filename, 'r+')
+        except (OSError, IOError) as err:
+            print("Could not open/read file:", self.filename)
+            return err
+
+        try:
+            file_data = buff.read().encode()
+            encrypted_data = fercryptor.encrypt(file_data)
+            buff.seek(0) # move to the start
+            buff.write(encrypted_data.decode())
+            buff.truncate()
             buff.close()
         except Exception as err:
             return err
 
-        return data
+    def decrypt_file(self):
+        """ Decrypt the contents of the file """
+        fercryptor = Fernet(self.key)
 
-    def encrypt_file(self):
-        pass
+        # Handle file exception
+        try:
+            buff = open(self.filename, 'r+')
+            file_data = buff.read().encode()
+            buff.seek(0) # move to the start
+            decrypted_data = fercryptor.decrypt(file_data)
+            buff.write(decrypted_data.decode())
+            buff.truncate()
+            buff.close()
+        except (OSError, IOError) as err:
+            print("Could not open/read file:", self.filename)
+            return err
+        except Exception as err:
+            return err

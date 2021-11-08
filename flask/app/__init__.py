@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
+import os
 
 
 def register_blueprints(app):
@@ -17,9 +18,20 @@ def register_error_handlers(app):
 
     app.register_error_handler(APIException, handle_validation_error)
 
+def load_config(app):
+    """ Load config for config.py """
+    from .configurations import APP_CONFIG
+
+    environment_configuration = os.environ['CONFIG_ENV']
+    app.config.from_object(APP_CONFIG[environment_configuration]())
+
 def create_app(**kwargs):
     app = Flask(__name__, **kwargs)
-    register_blueprints(app)
+    load_config(app)
     register_error_handlers(app)
     CORS(app)
+
+    with app.app_context():
+        register_blueprints(app)
+
     return app

@@ -1,0 +1,66 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Gringotts</title>
+        <meta name="description" content="A personal password manager">
+        <meta name="author" content="SitePoint">
+
+        <meta property="og:title" content="A personal password manager">
+        <meta property="og:type" content="website">
+        <meta property="og:description" content="A personal password manager">
+
+        <!-- Refresh content every 30 seconds -->
+        <meta http-equiv="refresh" content="30" />
+
+        <link rel="stylesheet" href="style.css">
+
+        <!-- Bootstrap stuff -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+        >
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"
+        >
+        </script>
+
+
+    </head>
+
+    <body>
+
+        <div class="bg-light p-5 rounded-lg m-3">
+            <h1 class="display-4">Gringotts</h1>
+            <p class="lead">Manage all your passwords with ease.</p>
+            <hr class="my-4">
+            <p>It uses a locally stored encrypted file to store passwords.</p>
+            <a class="btn btn-primary btn-lg" href="https://github.com/mrprofessor/gringotts" target="_blank" role="button">Source code!</a>
+        </div>
+
+        <div class="mx-auto" style="width: 500px">
+            <table class="table" id="pw_table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">password</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- add generated passwords here -->
+                </tbody>
+            </table>
+        </div>
+        <!-- your content here... -->
+        <script src="scripts.js"></script>
+    </body>
+</html>

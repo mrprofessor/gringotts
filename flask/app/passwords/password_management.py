@@ -99,6 +99,13 @@ class PasswordManagement:
         except Exception as err:
             return err
 
+    def seed_file(self):
+        """ Create and encrypt a new file"""
+        data = '{}'
+        encrypted_data = self.encrypt_text(data)
+        with open('passwords.json', 'w') as buff:
+            buff.write(encrypted_data)
+
     def decrypt_file(self):
         """ Decrypt the contents of the file """
         fercryptor = Fernet(self.key)

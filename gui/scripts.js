@@ -1,18 +1,81 @@
+function updatePassword(e) {
+  const passModal = new bootstrap.Modal(document.getElementById("passwordModal"), {});
+  passModal.show()
 
+  row = e.currentTarget.closest("tr")
+  modal = document.getElementById("passwordModal")
+  passwordModalLabel = modal.querySelector("#passwordModalLabel")
+  passwordModalLabel.innerText = "Update password"
 
-function deletePassword(id) {
-  const api = `http://127.0.0.1:5000/api/passwords/${id}/`
+  return getPasswords(row.dataset.uuid).then((pw_data) => {
+    nameField = modal.querySelector("#name")
+    loginField = modal.querySelector("#login")
+    passField = modal.querySelector("#password")
+
+    nameField.value = pw_data["name"]
+    loginField.value = pw_data["login"]
+    passField.value = pw_data["password"]
+
+    // Update the form action function
+    form = modal.querySelector("#passwordForm")
+    form.onsubmit = () => updateEntry(pw_data["uuid"], form)
+  })
+}
+
+function updateEntry(pw_id, form) {
+  const passForm = new FormData(form);
+  let api = `http://127.0.0.1:5000/api/passwords/${String(pw_id)}/`
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  let pw_data = JSON.stringify({
+    "name": passForm.get("name"),
+    "login": passForm.get("login"),
+    "password": passForm.get("password")
+  })
+
   const requestOptions = {
-    method: 'DELETE',
-    redirect: 'follow'
+    method: 'PUT',
+    redirect: 'follow',
+    headers: myHeaders,
+    body: pw_data
   };
-
-  let pw_data = {}
 
   return fetch(api, requestOptions)
     .then(response => response.json())
     .then(result =>
       {
+        buildStuff()
+        return result.data
+      })
+    .catch(error => console.log('error', error));
+}
+
+function createEntry(e) {
+  e.preventDefault();
+  const form = new FormData(e.target);
+  let api = "http://127.0.0.1:5000/api/passwords/"
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  let pw_data = JSON.stringify({
+    "name": form.get("name"),
+    "login": form.get("login"),
+    "password": form.get("password")
+  })
+
+  const requestOptions = {
+    method: 'POST',
+    redirect: 'follow',
+    headers: myHeaders,
+    body: pw_data
+  };
+
+  return fetch(api, requestOptions)
+    .then(response => response.json())
+    .then(result =>
+      {
+        buildStuff()
         return result.data
       })
     .catch(error => console.log('error', error));
@@ -30,8 +93,6 @@ function getPasswords(id="") {
     redirect: 'follow'
   };
 
-  let pw_data = {}
-
   return fetch(api, requestOptions)
     .then(response => response.json())
     .then(result =>
@@ -40,6 +101,22 @@ function getPasswords(id="") {
       })
     .catch(error => console.log('error', error));
 
+}
+
+function deletePassword(id) {
+  const api = `http://127.0.0.1:5000/api/passwords/${id}/`
+  const requestOptions = {
+    method: 'DELETE',
+    redirect: 'follow'
+  };
+
+  return fetch(api, requestOptions)
+    .then(response => response.json())
+    .then(result =>
+      {
+        return result.data
+      })
+    .catch(error => console.log('error', error));
 }
 
 function showPassword(e) {
@@ -66,12 +143,14 @@ function createRows(pw_data) {
     const tableRow = document.createElement("tr")
     const serialNumber = document.createElement("td")
     const nameTableData = document.createElement("td")
+    const loginTableData = document.createElement("td")
     const passTableData = document.createElement("td")
     const lastTableData = document.createElement("td")
 
     tableRow.dataset.uuid = pw.uuid
     serialNumber.innerText = String(i+1)
     nameTableData.innerText = pw.name
+    loginTableData.innerText = pw.login
     passTableData.innerText = "********"
     passTableData.dataset.type = "password"
     lastTableData.dataset.type = "action_buttons"
@@ -84,6 +163,7 @@ function createRows(pw_data) {
 
     tableRow.appendChild(serialNumber)
     tableRow.appendChild(nameTableData)
+    tableRow.appendChild(loginTableData)
     tableRow.append(passTableData)
     tableRow.append(lastTableData)
     tbody.append(tableRow)
@@ -101,7 +181,7 @@ function addEvents() {
     conceal_button.addEventListener("click", hidePassword)
 
     edit_button = col.querySelector(".pw_edit")
-    edit_button.addEventListener("click", hidePassword)
+    edit_button.addEventListener("click", updatePassword)
 
 
     delete_button = col.querySelector(".pw_delete")
@@ -120,7 +200,7 @@ function addEvents() {
 
 
 // Action block
-// Resolve the get call
+// Resolve the getpasswords call and build rows
 function buildStuff() {
   getPasswords().then((pw_data) => {
     createRows(pw_data)

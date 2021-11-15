@@ -3,14 +3,16 @@ A password manager named after the famous wizarding bank.
 
 ## Design
 
-< Add picture here >
+<kbd>
+  <img src="gringotts.png">
+</kbd>
 
 ### Tools used 
 
 1. Backend application Framework - Flask
 2. Application server: uWSGI
 3. Web server: NGINX (possibly)
-4. Frontend - React (No Redux)
+4. Frontend - ~~React~~ Basic HTML + JS
 5. Database - A local file (**NOT A DB**)
 6. Deployment - Docker
 
@@ -35,7 +37,8 @@ A password manager named after the famous wizarding bank.
     
     Payload:
         {
-           "name": "random_name"
+           "name": "random_name",
+           "login": "site_login",
            "password": "password"
         }
 ```
@@ -47,7 +50,8 @@ A password manager named after the famous wizarding bank.
     
     Payload:
         {
-           "name": "random_name"
+           "name": "random_name",
+           "login": "site_login",
            "password": "password"
         }
 ```
@@ -95,12 +99,29 @@ Only cons to this method is that if the user looses the key, it would be
 impossible to re-generate it again.
 
 
+## Run the application
+
+Steps to run the application
+
+```
+cd gringotts
+
+docker-compose build
+
+docker-compose up
+```
+
+
 ## Development
 
-Steps to run the backend app
+Development steps 
 
 ```
 cd flask
 docker build -t gringotts .
 docker run  -e CONFIG_ENV="development"  -e CRYPTO_KEY="aWV0tnyeoDbWPjmAKjwV_Q6dAPTy_wjdVJGf-iwJjfY="  -p 5000:5000 gringotts
+
+cd gui
+docker build -t gui .
+docker run -p 3000:3000 gui
 ```

@@ -42,15 +42,18 @@
             <p class="lead">Manage all your passwords with ease.</p>
             <hr class="my-4">
             <p>It uses a locally stored encrypted file to store passwords.</p>
-            <a class="btn btn-primary btn-lg" href="https://github.com/mrprofessor/gringotts" target="_blank" role="button">Source code!</a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                New password
+            </button>
         </div>
 
-        <div class="mx-auto" style="width: 500px">
+        <div class="mx-auto" style="width: 700px">
             <table class="table" id="pw_table">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        <th scope="col">login</th>
                         <th scope="col">password</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -63,4 +66,41 @@
         <!-- your content here... -->
         <script src="scripts.js"></script>
     </body>
+
+
+    <!-- Modal -->
+    <div class="modal fade"
+         id="passwordModal"
+         tabindex="-1"
+         aria-labelledby="passwordModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordModalLabel">Create Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="passwordForm" onsubmit="createEntry(event);">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Name</label>
+                            <input class="form-control" id="name" name="name" required="required">
+                        </div>
+                        <div class="mb-4">
+                            <label for="login" class="form-label">Login</label>
+                            <input class="form-control" id="login" name="login" required="required">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required="required">
+                        </div>
+                        <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </html>

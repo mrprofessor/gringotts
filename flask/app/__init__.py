@@ -20,10 +20,13 @@ def register_error_handlers(app):
 
 def load_config(app):
     """ Load config for config.py """
-    from .configurations import APP_CONFIG
+    from .configurations import APP_CONFIG, ProductionConfig
 
-    environment_configuration = os.environ['CONFIG_ENV']
-    app.config.from_object(APP_CONFIG[environment_configuration]())
+    # TODO
+    # Figure out, why it's failing while using docker-compose
+    # environment_configuration = os.environ['CONFIG_ENV']
+    # app.config.from_object(APP_CONFIG.get(environment_configuration)())
+    app.config.from_object(ProductionConfig())
 
 def create_app(**kwargs):
     app = Flask(__name__, **kwargs)
